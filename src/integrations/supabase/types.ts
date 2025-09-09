@@ -14,7 +14,175 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_suggestions: {
+        Row: {
+          chat_id: string
+          confidence_score: number | null
+          created_at: string
+          id: string
+          is_used: boolean | null
+          message_id: string | null
+          suggestion_text: string
+          suggestion_type: string
+        }
+        Insert: {
+          chat_id: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          message_id?: string | null
+          suggestion_text: string
+          suggestion_type: string
+        }
+        Update: {
+          chat_id?: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          is_used?: boolean | null
+          message_id?: string | null
+          suggestion_text?: string
+          suggestion_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_suggestions_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_suggestions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_chats: {
+        Row: {
+          chat_id: string
+          chat_name: string | null
+          chat_type: string | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          chat_id: string
+          chat_name?: string | null
+          chat_type?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          chat_id?: string
+          chat_name?: string | null
+          chat_type?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_chats_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_messages: {
+        Row: {
+          chat_id: string
+          content: string
+          created_at: string
+          id: string
+          is_from_me: boolean | null
+          message_id: string
+          message_type: string | null
+          sender_id: string
+          sender_name: string | null
+          timestamp: string
+        }
+        Insert: {
+          chat_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_from_me?: boolean | null
+          message_id: string
+          message_type?: string | null
+          sender_id: string
+          sender_name?: string | null
+          timestamp: string
+        }
+        Update: {
+          chat_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_from_me?: boolean | null
+          message_id?: string
+          message_type?: string | null
+          sender_id?: string
+          sender_name?: string | null
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          is_connected: boolean | null
+          last_activity: string | null
+          phone_number: string | null
+          session_data: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_connected?: boolean | null
+          last_activity?: string | null
+          phone_number?: string | null
+          session_data?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_connected?: boolean | null
+          last_activity?: string | null
+          phone_number?: string | null
+          session_data?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
