@@ -1,14 +1,46 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import LoginScreen from "@/components/LoginScreen";
+import ChatInterface from "@/components/ChatInterface";
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Verificar se já existe uma chave API salva no localStorage
+    const savedApiKey = localStorage.getItem("aicentral_api_key");
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+    setLoading(false);
+  }, []);
+
+  const handleLogin = (key: string) => {
+    setApiKey(key);
+    localStorage.setItem("aicentral_api_key", key);
+  };
+
+  const handleLogout = () => {
+    setApiKey(null);
+    localStorage.removeItem("aicentral_api_key");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-whatsapp-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-whatsapp-green mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!apiKey) {
+    return <LoginScreen onLogin={handleLogin} />;
+  }
+
+  return <ChatInterface apiKey={apiKey} onLogout={handleLogout} />;
 };
 
 export default Index;
