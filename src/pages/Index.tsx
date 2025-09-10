@@ -2,32 +2,13 @@ import { useState, useEffect } from "react";
 import LoginScreen from "@/components/LoginScreen";
 import ChatInterface from "@/components/ChatInterface";
 import WhatsAppInterface from "@/components/WhatsAppInterface";
-import AuthScreen from "@/components/AuthScreen";
-import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
 
 const Index = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState(null);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
     // Check for saved API key
     const savedApiKey = localStorage.getItem("aicentral_api_key");
     if (savedApiKey) {
@@ -35,8 +16,6 @@ const Index = () => {
     }
     
     setLoading(false);
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogin = (key: string) => {
@@ -44,15 +23,10 @@ const Index = () => {
     localStorage.setItem("aicentral_api_key", key);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
     setApiKey(null);
     localStorage.removeItem("aicentral_api_key");
     setShowWhatsApp(false);
-  };
-
-  const handleAuthSuccess = () => {
-    // Auth success is handled by the auth state listener
   };
 
   if (loading) {
@@ -66,12 +40,7 @@ const Index = () => {
     );
   }
 
-  // If no user is authenticated, show auth screen
-  if (!user) {
-    return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
-  }
-
-  // If authenticated but no API key for AI chat, show login screen
+  // If no API key, show login screen
   if (!apiKey && !showWhatsApp) {
     return <LoginScreen onLogin={handleLogin} />;
   }
@@ -88,13 +57,13 @@ const Index = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setShowWhatsApp(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              className="bg-whatsapp-green text-white px-4 py-2 rounded-lg hover:bg-whatsapp-green-dark transition-colors"
             >
               Abrir WhatsApp
             </button>
             <button
               onClick={handleLogout}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="bg-muted text-muted-foreground px-4 py-2 rounded-lg hover:bg-muted/80 transition-colors"
             >
               Logout
             </button>

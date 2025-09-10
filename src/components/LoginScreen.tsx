@@ -97,7 +97,7 @@ const LoginScreen = ({ onLogin }: LoginScreenProps) => {
               </div>
               <Button 
                 type="submit" 
-                className="w-full bg-whatsapp-green hover:bg-whatsapp-green-dark"
+                className="w-full bg-whatsapp-green hover:bg-whatsapp-green-dark text-white"
                 disabled={loading}
               >
                 {loading ? "Validando..." : "Entrar"}
